@@ -1,0 +1,22 @@
+{
+  "name": "employeetracker_egomez",
+  "version": "1.0.0",
+  "description": "empTracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/egome019/employeeTracker_egomez.git"
+  },
+  "author": "Erik Gomez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/egome019/employeeTracker_egomez/issues"
+  },
+  "homepage": "https://github.com/egome019/employeeTracker_egomez#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  }
+}
