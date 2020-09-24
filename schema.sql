@@ -8,7 +8,7 @@ CREATE TABLE employee (
   first_name VARCHAR(30),
   last_name VARCHAR(30),
   role_id INT NOT NULL,
-  manager_id INT not null,
+  manager_id INT,
   constraint fk_role foreign key(role_id) references empRole(id) on delete restrict on update cascade,
   constraint fk_manager foreign key(manager_id) references empRole(id) on delete restrict on update cascade,
   PRIMARY KEY(id)

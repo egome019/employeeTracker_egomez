@@ -44,7 +44,7 @@ const init = () => {
                 viewAllEmp()
                 break;
             case "View All Employees By Department":
-                // view all query...
+                viewAllEmpDept()
                 break;
             case "View All Employees By Manager":
                 // view all query...
@@ -76,6 +76,16 @@ const init = () => {
 // view all employees data
 const viewAllEmp = () => {
     connection.query("select * from employee", (err, res) => {
+        if (err) throw err;
+        // console.log(res)
+        console.table(res)
+    })
+}
+
+const viewAllEmpDept = () => {
+    const query = "select * from employee inner join empRole on (employee.role_id = empRole.id) order by empRole.dept_id"
+
+    connection.query(query, (err, res) => {
         if (err) throw err;
         // console.log(res)
         console.table(res)
