@@ -35,7 +35,8 @@ const init = () => {
             "Update Employee Manager",
             "View All Roles",
             "Add Roles",
-            "Remove Roles"
+            "Remove Roles",
+            "Exit"
         ]
     })
     .then((answer) => {
@@ -47,7 +48,7 @@ const init = () => {
                 viewAllEmpDept()
                 break;
             case "View All Employees By Manager":
-                // view all query...
+                viewAllMan()
                 break;
             case "Add Employee":
                 // view all query...
@@ -70,24 +71,56 @@ const init = () => {
             case "Remove Roles":
                 // view all query...
                 break;
+            case "Exit":
+                connection.end()
+                break;
         }
     });
 }
 // view all employees data
 const viewAllEmp = () => {
-    connection.query("select * from employee", (err, res) => {
+    const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
+    FROM employee e
+    INNER JOIN empRole ON e.role_id = empRole.id
+    INNER JOIN department ON dept_id = department.id
+    LEFT JOIN employee e2 ON e2.role_id = e.manager_id
+    ORDER BY e.first_name ASC`;
+    connection.query(query, (err, res) => {
         if (err) throw err;
-        // console.log(res)
+        console.log("--------------")
         console.table(res)
     })
+    init()
 }
 
 const viewAllEmpDept = () => {
-    const query = "select * from employee inner join empRole on (employee.role_id = empRole.id) order by empRole.dept_id"
+    const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
+    FROM employee e
+    INNER JOIN empRole ON e.role_id = empRole.id
+    INNER JOIN department ON dept_id = department.id
+    LEFT JOIN employee e2 ON e2.role_id = e.manager_id
+    ORDER BY dept_id ASC`;
 
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // console.log(res)
+        console.log("---------------")
         console.table(res)
     })
+    init()
+}
+
+const viewAllMan = () => {
+    const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
+    FROM employee e
+    INNER JOIN empRole ON e.role_id = empRole.id
+    INNER JOIN department ON dept_id = department.id
+    LEFT JOIN employee e2 ON e2.role_id = e.manager_id
+    ORDER BY Manager ASC`;
+
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log("---------------")
+        console.table(res)
+    })
+    init()
 }

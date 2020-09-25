@@ -9,8 +9,8 @@ CREATE TABLE employee (
   last_name VARCHAR(30),
   role_id INT NOT NULL,
   manager_id INT,
-  constraint fk_role foreign key(role_id) references empRole(id) on delete restrict on update cascade,
-  constraint fk_manager foreign key(manager_id) references empRole(id) on delete restrict on update cascade,
+  CONSTRAINT fk_role FOREIGN KEY(role_id) REFERENCES empRole(id) ON DELETE restrict ON UPDATE cascade,
+  CONSTRAINT fk_manager FOREIGN KEY(manager_id) REFERENCES empRole(id) ON DELETE restrict ON UPDATE cascade,
   PRIMARY KEY(id)
 );
 
@@ -19,8 +19,8 @@ CREATE TABLE empRole (
   title VARCHAR(30),
   salary DECIMAL,
   PRIMARY KEY(id),
-  dept_id int not null,
-  constraint fk_dept FOREIGN KEY (dept_id) REFERENCES department(id) on delete restrict on update cascade
+  dept_id INT NOT NULL,
+  CONSTRAINT fk_dept FOREIGN KEY (dept_id) REFERENCES department(id) ON DELETE restrict ON UPDATE cascade
 );
 
 CREATE TABLE department (
@@ -30,5 +30,5 @@ CREATE TABLE department (
 );
 
 SELECT * FROM department;
-select * from empRole;
-select * from employee;
+SELECT * FROM empRole;
+SELECT * FROM employee;
