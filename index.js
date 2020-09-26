@@ -28,14 +28,13 @@ const init = () => {
         choices: [
             "View All Employees",
             "View All Employees By Department",
-            "View All Employees By Manager",
+            "View All Employees By Role",
             "Add Employee",
             "Remove Employee",
             "Update Employee Role",
-            "Update Employee Manager",
             "View All Roles",
             "Add Roles",
-            "Remove Roles",
+            "Add Department",
             "Exit"
         ]
     })
@@ -47,8 +46,8 @@ const init = () => {
             case "View All Employees By Department":
                 viewAllEmpDept()
                 break;
-            case "View All Employees By Manager":
-                viewAllMan()
+            case "View All Employees By Role":
+                viewAllRole()
                 break;
             case "Add Employee":
                 addEmp()
@@ -57,10 +56,7 @@ const init = () => {
                 delEmp()
                 break;
             case "Update Employee Role":
-                // view all query...
-                break;
-            case "Update Employee Manager":
-                // view all query...
+                updateRole()
                 break;
             case "View All Roles":
                 // view all query...
@@ -68,7 +64,7 @@ const init = () => {
             case "Add Roles":
                 // view all query...
                 break;
-            case "Remove Roles":
+            case "Add Department":
                 // view all query...
                 break;
             case "Exit":
@@ -110,13 +106,13 @@ const viewAllEmpDept = () => {
     })
 }
 
-const viewAllMan = () => {
+const viewAllRole = () => {
     const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
     FROM employee e
     INNER JOIN empRole ON e.role_id = empRole.id
     INNER JOIN department ON dept_id = department.id
     LEFT JOIN employee e2 ON e2.role_id = e.manager_id
-    ORDER BY Manager ASC`;
+    ORDER BY Title ASC`;
 
     connection.query(query, (err, res) => {
         if (err) throw err;
@@ -244,3 +240,35 @@ const delEmp = () => {
     })
 }
 
+const updateRole = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "fname",
+            message: "What is the employee's first name?"
+        },
+        {
+            type: "input",
+            name: "lname",
+            message: "What is the employee's last name?"
+        },
+        {
+            type: "list",
+            name: "role",
+            message: "What is the employee's new job title?",
+            choices: role()
+        }
+    ])
+    .then((answers) => {
+        const roleId = role().indexOf(answers.role) + 1;
+        const fname = answers.fname;
+        const lname = answers.lname;
+        const query = `UPDATE employee SET role_id = ? WHERE first_name = ? AND last_name = ?`;
+        connection.query(query, [roleId, fname, lname], (err, res) => {
+            if (err) throw err;
+            console.log("---------------")
+            console.table(res.affectedRows + " employee was updated.\n")
+            init()
+        })
+    })
+}
