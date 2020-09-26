@@ -54,7 +54,7 @@ const init = () => {
                 addEmp()
                 break;
             case "Remove Employee":
-                // view all query...
+                delEmp()
                 break;
             case "Update Employee Role":
                 // view all query...
@@ -192,8 +192,55 @@ const addEmp = () => {
         connection.query(query, object, (err, res) => {
             if (err) throw err;
             console.log("---------------")
-            console.table(answers)
+            console.table(res.affectedRows + " employee was added.\n")
             init()
         })
     })
 }
+
+const delEmp = () => {
+    const query = "SELECT first_name, last_name FROM employee";
+    connection.query(query, (err, res) => {
+        if (err) throw err
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employee",
+                message: "Which employee would you like to remove?",
+                choices: function () {
+                    let employArr = [];
+                    for (var j = 0; j < res.length; j++){
+                        employArr.push(res[j].first_name + " " + res[j].last_name);
+                    }
+                    return employArr;
+                }
+            }
+        ])
+        .then((answers) => {
+            const queryId = "SELECT * FROM employee";
+            connection.query(queryId, (err, res) => {
+                if (err) throw err
+                let delEmploy;
+                for (var i = 0; i < res.length; i++) {
+                    const chosenEmp = res[i].first_name + " " + res[i].last_name;
+                    if (chosenEmp === answers.employee) {
+                        delEmploy = res[i].id
+                    
+                    }
+                }
+                const object = {
+                    id: delEmploy
+                }
+                const query = `DELETE FROM employee WHERE id = ${object.id}`;
+                connection.query(query, (err, res) => {
+                    if (err) throw err;
+                    console.log("---------------")
+                    console.table(res.affectedRows + " employee was deleted.\n")
+                    init()
+                })
+            })
+            
+        })
+    })
+}
+
