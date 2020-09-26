@@ -51,7 +51,7 @@ const init = () => {
                 viewAllMan()
                 break;
             case "Add Employee":
-                // view all query...
+                addEmp()
                 break;
             case "Remove Employee":
                 // view all query...
@@ -89,8 +89,9 @@ const viewAllEmp = () => {
         if (err) throw err;
         console.log("--------------")
         console.table(res)
+        init()
     })
-    init()
+    
 }
 
 const viewAllEmpDept = () => {
@@ -105,8 +106,8 @@ const viewAllEmpDept = () => {
         if (err) throw err;
         console.log("---------------")
         console.table(res)
+        init()
     })
-    init()
 }
 
 const viewAllMan = () => {
@@ -121,6 +122,78 @@ const viewAllMan = () => {
         if (err) throw err;
         console.log("---------------")
         console.table(res)
+        init()
     })
-    init()
+}
+
+const empRoleArr = [];
+const role = () => {
+    const query = "SELECT * FROM empRole";
+    connection.query(query, (err, res) => {
+        if (err) throw err
+        for (var index = 0; index < res.length; index++){
+            empRoleArr.push(res[index].title);
+        }
+
+    })
+    return empRoleArr;
+}
+
+const managersAvail = [];
+const managers = () => {
+    const query = "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL";
+    connection.query(query, (err, res) => {
+        if (err) throw err
+        for (var index = 0; index < res.length; index++){
+            managersAvail.push(res[index].first_name + " " + res[index].last_name);
+        }
+
+    })
+    return managersAvail;
+}
+
+const addEmp = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "fname",
+            message: "What is the new employee's first name?"
+        },
+        {
+            type: "input",
+            name: "lname",
+            message: "What is the new employee's last name?"
+        },
+        {
+            type: "list",
+            name: "role",
+            message: "What is the new employee's job title?",
+            choices: role()
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Who is your new employee's Manager?",
+            choices: managers()
+        }
+    ])
+    .then((answers) => {
+        const roleId = role().indexOf(answers.role) + 1;
+        console.log(roleId)
+        const managerId = managers().indexOf(answers.manager) + 1;
+        console.log(managerId)
+        const query = `INSERT INTO employee SET ?`;
+        const object = {
+            first_name: answers.fname,
+            last_name: answers.lname,
+            role_id: roleId,
+            manager_id: managerId
+        }
+        connection.query(query, object, (err, res) => {
+            if (err) throw err;
+            console.log("---------------")
+            console.table(answers)
+            init()
+        })
+    })
 }
