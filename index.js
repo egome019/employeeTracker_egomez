@@ -32,7 +32,6 @@ const init = () => {
             "Add Employee",
             "Remove Employee",
             "Update Employee Role",
-            "View All Roles",
             "Add Roles",
             "Add Department",
             "Exit"
@@ -58,14 +57,11 @@ const init = () => {
             case "Update Employee Role":
                 updateRole()
                 break;
-            case "View All Roles":
-                // view all query...
-                break;
             case "Add Roles":
-                // view all query...
+                addRole()
                 break;
             case "Add Department":
-                // view all query...
+                addDept()
                 break;
             case "Exit":
                 connection.end()
@@ -269,6 +265,82 @@ const updateRole = () => {
             console.log("---------------")
             console.table(res.affectedRows + " employee was updated.\n")
             init()
+        })
+    })
+}
+
+const addDept = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "deptName",
+            message: "What is the name of the new department?"
+        }
+    ])
+    .then((answers) => {
+        const query = `INSERT INTO department SET ?`;
+        const object = {
+            dept_name: answers.deptName
+        }
+        connection.query(query, object, (err, res) => {
+            if (err) throw err;
+            console.log("---------------")
+            console.table(res.affectedRows + " department was added.\n")
+            init()
+        })
+    })
+}
+
+const addRole = () => {
+    const query = "SELECT * FROM department";
+    connection.query(query, (err, res) => {
+        if (err) throw err
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "roleName",
+                message: "What is the name of the new role?"
+            },
+            {
+                type: "input",
+                name: "salary",
+                message: "What is the salary the new role has?"
+            },
+            {
+                type: "list",
+                name: "dept",
+                message: "What department does this role belong to?",
+                choices: function () {
+                    let deptAvail = [];
+                    for (var q = 0; q < res.length; q++){
+                        deptAvail.push(res[q].dept_name);
+                        console.log(deptAvail)
+                    }
+                    return deptAvail;
+                }
+            }
+        ])
+        .then((answers) => {
+            
+            let chosenDept;
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].dept_name === answers.dept) {
+                    chosenDept = res[i].id
+                }
+            }
+            const query = `INSERT INTO empRole SET ?`;
+            const object = {
+                title: answers.roleName,
+                salary: answers.salary,
+                dept_id: chosenDept
+            }     
+            connection.query(query, object, (err, res) => {
+                if (err) throw err;
+                console.log("---------------")
+                console.table(res.affectedRows + " new role was added.\n")
+                init()
+            })
+        
         })
     })
 }
