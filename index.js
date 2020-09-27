@@ -1,7 +1,8 @@
+// Dependencies
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table")
-
+// mySql connection login
 const connection = mysql.createConnection({
     host: "localhost",
 
@@ -9,10 +10,10 @@ const connection = mysql.createConnection({
 
     user: "root",
 
-    password: "Soccer115!",
+    password: "",
     database: "workPlace_DB"
 });
-
+// connects to database
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
@@ -85,7 +86,7 @@ const viewAllEmp = () => {
     })
     
 }
-
+// view all employee data sorted by department
 const viewAllEmpDept = () => {
     const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
     FROM employee e
@@ -101,7 +102,7 @@ const viewAllEmpDept = () => {
         init()
     })
 }
-
+// view all employee data sorted by role
 const viewAllRole = () => {
     const query = `SELECT e.id, e.first_name AS "First Name" , e.last_name AS "Last Name", title AS "Title", dept_name AS "Department", salary, CONCAT(e2.first_name, " ", e2.last_name) AS Manager
     FROM employee e
@@ -117,7 +118,7 @@ const viewAllRole = () => {
         init()
     })
 }
-
+// these two consts were used to display the roles in the choices property for the add employee functionality
 const empRoleArr = [];
 const role = () => {
     const query = "SELECT * FROM empRole";
@@ -130,7 +131,7 @@ const role = () => {
     })
     return empRoleArr;
 }
-
+// these two consts were used to display the roles in the choices property for the add employee functionality
 const managersAvail = [];
 const managers = () => {
     const query = "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL";
@@ -143,7 +144,7 @@ const managers = () => {
     })
     return managersAvail;
 }
-
+// this was the function for adding employees to the database
 const addEmp = () => {
     inquirer.prompt([
         {
@@ -171,9 +172,7 @@ const addEmp = () => {
     ])
     .then((answers) => {
         const roleId = role().indexOf(answers.role) + 1;
-        console.log(roleId)
         const managerId = managers().indexOf(answers.manager) + 1;
-        console.log(managerId)
         const query = `INSERT INTO employee SET ?`;
         const object = {
             first_name: answers.fname,
@@ -189,7 +188,7 @@ const addEmp = () => {
         })
     })
 }
-
+// this was the function for deleting employees from the database
 const delEmp = () => {
     const query = "SELECT first_name, last_name FROM employee";
     connection.query(query, (err, res) => {
@@ -235,7 +234,7 @@ const delEmp = () => {
         })
     })
 }
-
+// this function was for updating an existing employees role
 const updateRole = () => {
     inquirer.prompt([
         {
@@ -268,7 +267,7 @@ const updateRole = () => {
         })
     })
 }
-
+// this was the function for adding a new department to the database
 const addDept = () => {
     inquirer.prompt([
         {
@@ -290,7 +289,7 @@ const addDept = () => {
         })
     })
 }
-
+// this was the function for adding a new role to the database
 const addRole = () => {
     const query = "SELECT * FROM department";
     connection.query(query, (err, res) => {
@@ -314,14 +313,12 @@ const addRole = () => {
                     let deptAvail = [];
                     for (var q = 0; q < res.length; q++){
                         deptAvail.push(res[q].dept_name);
-                        console.log(deptAvail)
                     }
                     return deptAvail;
                 }
             }
         ])
         .then((answers) => {
-            
             let chosenDept;
             for (var i = 0; i < res.length; i++) {
                 if (res[i].dept_name === answers.dept) {
