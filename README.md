@@ -46,8 +46,8 @@
   
   ## Demonstration
   
-  [Click here]() to use the application.
-  ![]()
-  ![]()
+  [Click here](https://drive.google.com/file/d/16NUdhM6Viv0FCOvHYyBYp2u0xBxQB7lx/view) to view a small recording of the application's functionality.
+  ![](./Images/appHome.png)
+  ![](./Images/appFunctionality.png)
 
   
